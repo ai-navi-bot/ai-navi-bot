@@ -1,11 +1,10 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "rootDirectory": "bot"
+    "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python app.py",
+    "startCommand": "python bot/app.py",
     "restartPolicyType": "ON_FAILURE"
   }
 }
