@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import os
 import sys
 
 from aiogram import Bot, Dispatcher
@@ -38,12 +39,16 @@ async def main() -> None:
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
-    if "--force" in sys.argv:
-        logger.info("Принудительный перезапуск: остановка старых экземпляров...")
-        stop_running_instance()
+    on_railway = bool(os.getenv("RAILWAY_ENVIRONMENT"))
+    instance_lock: SingleInstanceLock | None = None
 
-    instance_lock = SingleInstanceLock()
-    instance_lock.acquire()
+    if not on_railway:
+        if "--force" in sys.argv:
+            logger.info("Принудительный перезапуск: остановка старых экземпляров...")
+            stop_running_instance()
+
+        instance_lock = SingleInstanceLock()
+        instance_lock.acquire()
 
     config = Config()
     validate_bot_token(config.bot_token)
@@ -68,7 +73,8 @@ async def main() -> None:
         await dispatcher.start_polling(bot)
     finally:
         await bot.session.close()
-        instance_lock.release()
+        if instance_lock is not None:
+            instance_lock.release()
 
 
 if __name__ == "__main__":
