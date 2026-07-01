@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.vscode/
+.idea/
+*.log
+data/bot.lock
+data/responses.xlsx
+data/database.db
